@@ -22,13 +22,64 @@ $(function () {
     // TODO: Add code to display the current date in the header of the page.
 
     
-        // Click event listener for the save button
-        $('.saveBtn').on('click', function() {
-          const description = $(this).siblings('.description').val();
-          const blockID = $(this).closest('.time-block').attr('id');
-      
-          localStorage.setItem(blockID, description);
+
+        // JavaScript/jQuery for saving text for the day
+        $(function() {
+        const saveButton = $('#save-button');
+        const userInput = $('#user-input');
+        
+        // Function to get today's date in the format YYYY-MM-DD
+        function getTodayDate() {
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = String(today.getMonth() + 1).padStart(2, '0');
+          const day = String(today.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        }
+        
+        saveButton.on('click', function() {
+          const todayDate = getTodayDate();
+          const userText = userInput.val();
+          
+          // Save the text for today's date in local storage
+          localStorage.setItem(todayDate, userText);
+          alert('Text saved for today!');
         });
+      });
+
+      $(function() {
+        const clearLocalStorageOnNewDay = () => {
+          const currentDate = new Date().getDate();
+          const storedDate = localStorage.getItem('savedDate');
+      
+          if (storedDate && parseInt(storedDate) !== currentDate) {
+            localStorage.clear(); // Clear local storage when a new day starts
+            localStorage.setItem('savedDate', currentDate);
+          }
+        };
+      
+        const saveText = () => {
+          const userText = $('#user-input').val();
+          localStorage.setItem('userText', userText);
+          alert('Text saved!');
+        };
+      
+        const loadText = () => {
+          const storedText = localStorage.getItem('userText');
+          if (storedText) {
+            $('#user-input').val(storedText);
+          }
+        };
+      
+        $('#save-button').on('click', saveText);
+      
+        // Check and clear local storage when a new day starts
+        clearLocalStorageOnNewDay();
+      
+        // Load text when the page loads
+        loadText();
+      });
+      
       
         // Function to update time block classes
         function updateTimeBlocks() {
@@ -48,6 +99,9 @@ $(function () {
         }
       
         updateTimeBlocks(); // Initial update
+
+        setInterval(updateTimeBlocks, 3600000); // Update every hour (3600000 milliseconds)
+
       
         // Retrieve user inputs from localStorage and set textarea values
         $('.time-block').each(function() {
@@ -58,10 +112,12 @@ $(function () {
             $(this).find('.description').val(savedDescription);
           }
         });
+        
       
         // Display current date in the header
         const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         $('#current-date').text(currentDate); 
-    
+
+ 
       
   });
