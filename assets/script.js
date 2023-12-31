@@ -53,7 +53,7 @@ $(function () {
           const storedDate = localStorage.getItem('savedDate');
       
           if (storedDate && parseInt(storedDate) !== currentDate) {
-            localStorage.clear(); // Clear local storage when a new day starts
+            localStorage.removeItem('userText'); // Clear local storage when a new day starts
             localStorage.setItem('savedDate', currentDate);
           }
         };
